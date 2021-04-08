@@ -11,7 +11,7 @@ Simple RSA VDF in Rust
             // challenger picks VDF challenge 
             let unsolved_vdf = SetupForVDF::pick_challenge(&setup); 
             // solver solves VDF
-            let vdf_out_proof = UnsolvedVDF::eval(&unsolved_vdf);
+            let solved_vdf = UnsolvedVDF::eval(&unsolved_vdf);
             // challnger check solution
-            let res = vdf_out_proof.verify(&unsolved_vdf);
+            let res = solved_vdf.verify(&unsolved_vdf);
             assert!(res.is_ok())
