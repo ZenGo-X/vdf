@@ -7,7 +7,7 @@ use curv::arithmetic::{traits::*, BigInt};
 use serde::{Deserialize, Serialize};
 use utilities::{compute_rsa_modulus, h_g, hash_to_prime};
 
-const BIT_LENGTH: usize = 2048;
+const BIT_LENGTH: usize = 4096;
 const SEED_LENGTH: usize = 256;
 pub mod utilities;
 
@@ -67,7 +67,7 @@ impl UnsolvedVDF {
             y = BigInt::mod_mul(&y, &y, &N);
             i = i + BigInt::one();
         }
-        let l = hash_to_prime(&N, &t, &g, &y);
+        let l = hash_to_prime(&unsolved_vdf.setup, &g, &y);
 
         //algorithm 4 from https://eprint.iacr.org/2018/623.pdf
         // long division TODO: consider alg 5 instead
@@ -109,11 +109,11 @@ impl SolvedVDF {
         let g = h_g(&self.vdf_instance.setup.N, &self.vdf_instance.x);
 
         // test that y is element in the group : https://eprint.iacr.org/2018/712.pdf 2.1 line 0
-        if self.y.gcd(&N) != BigInt::one() || self.pi.gcd(&N) != BigInt::one() {
+        if &self.y >= &N || &self.pi >= &N {
             return Err(ErrorReason::VDFVerifyError);
         }
 
-        let l = hash_to_prime(&N, &self.vdf_instance.setup.t, &g, &self.y);
+        let l = hash_to_prime(&self.vdf_instance.setup, &g, &self.y);
 
         let r = BigInt::mod_pow(&BigInt::from(2), &self.vdf_instance.setup.t, &l);
         let pi_l = BigInt::mod_pow(&self.pi, &l, &N);
@@ -137,7 +137,7 @@ mod tests {
 
     #[test]
     fn test_vdf_valid_proof() {
-        let t = BigInt::sample(20);
+        let t = BigInt::sample(13);
         let setup = SetupForVDF::public_setup(&t);
 
         let mut i = 0;
@@ -157,5 +157,6 @@ mod tests {
 
             assert!(res.is_ok());
         }
+        assert!(false);
     }
 }

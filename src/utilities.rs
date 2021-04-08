@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 
+use crate::SetupForVDF;
 use curv::arithmetic::traits::*;
 use curv::arithmetic::BitManipulation;
 use curv::arithmetic::{Integer, One, Zero};
@@ -9,12 +10,15 @@ use curv::BigInt;
 use std::error::Error;
 use std::fmt;
 use std::ops::Shl;
+
 #[derive(Debug, Clone, Copy)]
 pub struct ProofError;
 
 const DIGEST_SIZE: usize = 512;
 
-/// helper function H_G(x) \in Z_N*
+// We work in G+ group as defined in https://eprint.iacr.org/2018/712.pdf section 6
+// "when computing in this group it suffices to represent a coset {x,−x} by a single number, either x or −x, whichever is in the range [0,N/2)"
+// helper function H_G(x) \in Z_N*
 pub fn h_g(N: &BigInt, x: &BigInt) -> BigInt {
     let hash_vec_len = N.bit_length() / DIGEST_SIZE + 1; // adding one sha256 is more efficient then rejection sampling
     let hash_vector = (0..hash_vec_len)
@@ -27,9 +31,7 @@ pub fn h_g(N: &BigInt, x: &BigInt) -> BigInt {
         .fold(BigInt::zero(), |acc, x| acc + x.0.shl(x.1 * DIGEST_SIZE));
 
     res = res.modulus(N);
-    while res.gcd(N) != BigInt::one() {
-        res = res + 1;
-    }
+
     res
 }
 
@@ -51,9 +53,9 @@ pub enum ErrorReason {
     MisMatchedVDF,
 }
 
-pub fn hash_to_prime(N: &BigInt, t: &BigInt, g: &BigInt, y: &BigInt) -> BigInt {
+pub fn hash_to_prime(setup: &SetupForVDF, g: &BigInt, y: &BigInt) -> BigInt {
     // for safety margin we take 2 * lambda to be 512 bit
-    let mut candidate = HSha512::create_hash(&[N, t, g, y]);
+    let mut candidate = HSha512::create_hash(&[&setup.N, &setup.t, g, y]);
 
     if candidate.modulus(&BigInt::from(2)) == BigInt::zero() {
         candidate = candidate + BigInt::one();
@@ -71,7 +73,11 @@ pub fn compute_rsa_modulus(bit_length: usize) -> BigInt {
     let q = find_prime(bit_length / 2);
     // note ethat since p an q are random the actual bit size of N=pq might be different than
     // bit length
-    p * q
+    let N = p * q;
+    let N_minus_1 = N - BigInt::one();
+    let N_prime = N_minus_1.div_floor(&BigInt::from(2));
+    N_prime
+    // p * q
 }
 
 fn find_prime(bit_length: usize) -> BigInt {
