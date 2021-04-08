@@ -69,7 +69,6 @@ impl UnsolvedVDF {
         }
         let l = hash_to_prime(&N, &t, &g, &y);
 
-
         //algorithm 4 from https://eprint.iacr.org/2018/623.pdf
         // long division TODO: consider alg 5 instead
         let mut i = BigInt::zero();
@@ -116,13 +115,10 @@ impl SolvedVDF {
 
         let l = hash_to_prime(&N, &self.vdf_instance.setup.t, &g, &self.y);
 
-
-
         let r = BigInt::mod_pow(&BigInt::from(2), &self.vdf_instance.setup.t, &l);
         let pi_l = BigInt::mod_pow(&self.pi, &l, &N);
         let g_r = BigInt::mod_pow(&g, &r, &N);
         let pi_l_g_r = BigInt::mod_mul(&pi_l, &g_r, &N);
-
 
         match pi_l_g_r == self.y {
             true => return Ok(()),
@@ -161,7 +157,5 @@ mod tests {
 
             assert!(res.is_ok());
         }
-        assert!(false);
-
     }
 }
