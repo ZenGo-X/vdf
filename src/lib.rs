@@ -144,10 +144,10 @@ mod tests {
         while i < 10 {
             let unsolved_vdf = SetupForVDF::pick_challenge(&setup);
             let start = Instant::now();
-            let vdf_out_proof = UnsolvedVDF::eval(&unsolved_vdf);
+            let solved_vdf = UnsolvedVDF::eval(&unsolved_vdf);
             let duration1 = start.elapsed();
             let start = Instant::now();
-            let res = vdf_out_proof.verify(&unsolved_vdf);
+            let res = solved_vdf.verify(&unsolved_vdf);
             let duration2 = start.elapsed();
             i = i + 1;
 
