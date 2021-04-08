@@ -1,5 +1,5 @@
 # vdf
-Simple RSA VDF in Rust
+Simple RSA VDF in Rust ([Wesolowski18](https://eprint.iacr.org/2018/623.pdf))
 
 
 ```rust
