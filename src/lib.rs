@@ -147,6 +147,7 @@ mod tests {
             let solved_vdf = UnsolvedVDF::eval(&unsolved_vdf);
             let duration1 = start.elapsed();
             let start = Instant::now();
+            // here unsolved_vdf is the version that was kept by the challenger
             let res = solved_vdf.verify(&unsolved_vdf);
             let duration2 = start.elapsed();
             i = i + 1;
