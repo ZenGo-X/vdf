@@ -52,7 +52,11 @@ pub enum ErrorReason {
     VDFVerifyError,
     MisMatchedVDF,
 }
-
+// The original paper suggests doing rejection sampling until H(N,g,t,y) is prime  (find smallest i st H(N,g,t,y,i) is prime).
+// This is slower though, so instead we can hash only once, and look for the primes nearby.
+// The problem is that you have a bias toward primes that are “first”.
+// For example, if you have p1 and p2=p1+2, then p1 will have a higher chance of appearing than p2.
+// credit: Adrian Hamelink
 pub fn hash_to_prime(setup: &SetupForVDF, g: &BigInt, y: &BigInt) -> BigInt {
     // for safety margin we take 2 * lambda to be 512 bit
     let mut candidate = HSha512::create_hash(&[&setup.N, &setup.t, g, y]);
@@ -71,7 +75,7 @@ pub fn compute_rsa_modulus(bit_length: usize) -> BigInt {
     // doesn't have to be safe primes
     let p = find_prime(bit_length.clone() / 2);
     let q = find_prime(bit_length / 2);
-    // note ethat since p an q are random the actual bit size of N=pq might be different than
+    // note that since p an q are random the actual bit size of N=pq might be different than
     // bit length
     let N = p * q;
     let N_minus_1 = N - BigInt::one();
