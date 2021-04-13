@@ -1,7 +1,8 @@
 [package]
-name = "vdf"
+name = "rsa-vdf"
 version = "0.0.1"
 edition = "2018"
+description = "Verifiable Delay Function (Wesolowski 18)"
 authors = [
     "Omer <omer.shlomovits@gmail.com>",
 ]
@@ -13,7 +14,6 @@ categories = ["cryptography"]
 crate-type = ["lib"]
 
 [dependencies]
-#rayon = "1.1"
 serde = { version = "1.0", features = ["derive"] }
 
 [dependencies.curv]
