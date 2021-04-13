@@ -6,6 +6,7 @@ description = "Verifiable Delay Function (Wesolowski 18)"
 authors = [
     "Omer <omer.shlomovits@gmail.com>",
 ]
+repository = "https://github.com/ZenGo-X/vdf"
 
 license = "GPL-3.0-or-later"
 categories = ["cryptography"]

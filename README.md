@@ -1,3 +1,7 @@
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![Docs](https://docs.rs/rsa-vdf/badge.svg)](https://docs.rs/rsa-vdf)
+[![Crates io](https://img.shields.io/crates/v/rsa-vdf.svg)](https://crates.io/crates/rsa-vdf)
+
 # RSA VDF
 Simple RSA VDF in Rust ([Wesolowski18](https://eprint.iacr.org/2018/623.pdf))
 
